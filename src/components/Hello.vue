@@ -1,8 +1,7 @@
 <template>
   <div class="hello">
     <h3>{{ msg }}</h3>
-    <canvas id="myChart" width="400" height="400"></canvas>
-    <button aria-hidden="true" v-on:click="update()"></button>
+    <canvas id="myChart" width="200" height="200"></canvas>
   </div>
 </template>
 
@@ -19,7 +18,7 @@ export default {
   methods: {
     update: function () {}
   },
-  created: function () {
+  mounted: function () {
     var ctx = document.getElementById('myChart')
     var data = {
       labels: [
@@ -30,11 +29,11 @@ export default {
         {
           data: [18, 126],
           backgroundColor: [
-            '#FF6384',
+            '#ff0606',
             '#36A2EB'
           ],
           hoverBackgroundColor: [
-            '#FF6384',
+            '#ff0606',
             '#36A2EB'
           ]
         }
