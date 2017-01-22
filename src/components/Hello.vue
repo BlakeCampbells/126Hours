@@ -17,36 +17,36 @@ export default {
     }
   },
   methods: {
-    update: function () {
-      var ctx = document.getElementById('myChart')
-      var data = {
-        labels: [
-          'Time Passed',
-          'Time Left'
-        ],
-        datasets: [
-          {
-            data: [18, 126],
-            backgroundColor: [
-              '#FF6384',
-              '#36A2EB'
-            ],
-            hoverBackgroundColor: [
-              '#FF6384',
-              '#36A2EB'
-            ]
-          }
-        ]
-      }
-      var myDoughnutChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: data,
-        options: {}
-      })
-      console.log(myDoughnutChart)
-    }
+    update: function () {}
   },
-  created: function () {}
+  created: function () {
+    var ctx = document.getElementById('myChart')
+    var data = {
+      labels: [
+        'Time Passed',
+        'Time Left'
+      ],
+      datasets: [
+        {
+          data: [18, 126],
+          backgroundColor: [
+            '#FF6384',
+            '#36A2EB'
+          ],
+          hoverBackgroundColor: [
+            '#FF6384',
+            '#36A2EB'
+          ]
+        }
+      ]
+    }
+    var myDoughnutChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: data,
+      options: {}
+    })
+    console.log(myDoughnutChart)
+  }
 }
 </script>
 
