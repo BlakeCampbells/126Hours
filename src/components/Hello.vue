@@ -2,15 +2,7 @@
   <div class="hello">
     <h3>{{ msg }}</h3>
     <canvas id="myChart" width="400" height="400"></canvas>
-    <h2>Essential Links</h2>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
-      <li><a href="https://gitter.im/vuejs/vue" target="_blank">Gitter Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
-      <br>
-      <button aria-hidden="true" v-on:click="update()"></button>
-    </ul>
+    <button aria-hidden="true" v-on:click="update()"></button>
   </div>
 </template>
 
