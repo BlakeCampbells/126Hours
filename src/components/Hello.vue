@@ -1,6 +1,7 @@
 <template>
   <div class="hello">
     <p>{{ msg }}</p>
+    <p>{{ timeLeftThisWeek }}</p>
     <div class="row">
       <div class="col s12 m6 offset-m3">
         <div class="card darken-1">
@@ -24,7 +25,8 @@ export default {
   name: 'hello',
   data () {
     return {
-      msg: 'There\'s 168 Hours in a week. Minus six hours of sleep a night. You are left with 126 hours, make them count.'
+      msg: 'There\'s 168 Hours in a week. Minus six hours of sleep a night. You are left with 126 hours, make them count.',
+      timeLeftThisWeek: this.timeLeftFormatted()
     }
   },
   methods: {
@@ -59,12 +61,17 @@ export default {
         label += ' ' + dateTime.minutes + ' minute'
       }
 
-      if (dateTime.seconds > 1) {
-        label += ' ' + dateTime.seconds + ' seconds'
-      } else if (dateTime.seconds === 1) {
-        label += ' ' + dateTime.seconds + ' second'
-      }
+      return label
+    },
+    timeLeftFormatted: function () {
+      var timeObj = moment().countdown(moment().endOf('week'))
+      var label = this.labelTimes(timeObj)
 
+      if (timeObj.seconds !== 1) {
+        label += ' ' + timeObj.seconds + ' seconds'
+      } else {
+        label += ' ' + timeObj.seconds + ' second'
+      }
       return label
     },
     timePassed: function () {
@@ -138,6 +145,7 @@ export default {
       myDoughnutChart.data.datasets[0].data[1] = self.timePassed()
       myDoughnutChart.data.datasets[0].data[2] = self.timeTill()
       myDoughnutChart.update()
+      self.timeLeftThisWeek = self.timeLeftFormatted()
     }, 1000)
   }
 }
