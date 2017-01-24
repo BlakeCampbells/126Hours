@@ -1,12 +1,24 @@
 <template>
   <div class="hello">
-    <h3>{{ msg }}</h3>
-    <canvas id="myChart" width="200" height="200"></canvas>
+    <p>{{ msg }}</p>
+    <div class="row">
+      <div class="col s12 m6 offset-m3">
+        <div class="card darken-1">
+          <div class="card-content">
+            <span class="card-title">Time Spent</span>
+            <canvas id="myChart" width="200" height="200"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import Chart from 'chart.js'
+import moment from 'moment'
+import countdown from 'countdown'
+import momentCountdown from 'moment-countdown'
 
 export default {
   name: 'hello',
@@ -16,23 +28,89 @@ export default {
     }
   },
   methods: {
-    update: function () {}
+    update: function () {},
+    msToTime: function (ms) {
+      var tempTime = moment.duration(ms)
+      var dateTime = {
+        days: tempTime.days(),
+        hours: tempTime.hours(),
+        minutes: tempTime.minutes(),
+        seconds: tempTime.seconds()
+      }
+      return dateTime
+    },
+    labelTimes: function (dateTime) {
+      var label = ''
+      if (dateTime.days > 1) {
+        label += dateTime.days + ' days'
+      } else if (dateTime.days === 1) {
+        label += dateTime.days + ' day'
+      }
+
+      if (dateTime.hours > 1) {
+        label += ' ' + dateTime.hours + ' hours'
+      } else if (dateTime.hours === 1) {
+        label += ' ' + dateTime.hours + ' hour'
+      }
+
+      if (dateTime.minutes > 1) {
+        label += ' ' + dateTime.minutes + ' minutes'
+      } else if (dateTime.minutes === 1) {
+        label += ' ' + dateTime.minutes + ' minute'
+      }
+
+      if (dateTime.seconds > 1) {
+        label += ' ' + dateTime.seconds + ' seconds'
+      } else if (dateTime.seconds === 1) {
+        label += ' ' + dateTime.seconds + ' second'
+      }
+
+      return label
+    },
+    timePassed: function () {
+      return moment(moment().startOf('week')).countdown(moment().utc()).value - this.timeAsleep()
+    },
+    timeTill: function () {
+      return moment().countdown(moment().endOf('week')).value
+    },
+    timeAsleep: function () {
+      return moment(moment().startOf('week')).countdown(moment().utc().add(1, 'day')).days * 6 * 60 * 60 * 1000
+    }
   },
   mounted: function () {
+    var self = this
+    var week = {
+      time: {
+        asleep: self.timeAsleep(),
+        passed: self.timePassed(),
+        till: self.timeTill()
+      }
+    }
+    console.log('Week', week)
+    console.log(countdown, momentCountdown)
+    console.log('Time asleep', self.timeAsleep())
+
     var ctx = document.getElementById('myChart')
     var data = {
       labels: [
-        'Time Passed',
+        'Time Asleep',
+        'Time Awake',
         'Time Left'
       ],
       datasets: [
         {
-          data: [18, 126],
+          data: [
+            week.time.asleep,
+            week.time.passed,
+            week.time.till
+          ],
           backgroundColor: [
+            '#616161',
             '#ff0606',
             '#36A2EB'
           ],
           hoverBackgroundColor: [
+            '#616161',
             '#ff0606',
             '#36A2EB'
           ]
@@ -42,9 +120,25 @@ export default {
     var myDoughnutChart = new Chart(ctx, {
       type: 'doughnut',
       data: data,
-      options: {}
+      animationStaps: 10,
+      options: {
+        tooltips: {
+          callbacks: {
+            label: function (tooltipItem, data) {
+              var dateTime = self.msToTime(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index])
+              var dateLabel = self.labelTimes(dateTime)
+              var label = data.labels[tooltipItem.index]
+              return label + ': ' + dateLabel
+            }
+          }
+        }
+      }
     })
-    console.log(myDoughnutChart)
+    setInterval(function () {
+      myDoughnutChart.data.datasets[0].data[1] = self.timePassed()
+      myDoughnutChart.data.datasets[0].data[2] = self.timeTill()
+      myDoughnutChart.update()
+    }, 1000)
   }
 }
 </script>
