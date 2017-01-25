@@ -1,7 +1,9 @@
 <template>
   <div class="hello">
     <p>{{ msg }}</p>
-    <p>{{ timeLeftThisWeek }}</p>
+    <p>Time Remaining: {{ time.left.total }}</p>
+    <p>Time Passed: {{ time.passed.total }}</p>
+    <p>Estimated Time Asleep: {{ time.asleep.total }}</p>
     <div class="row">
       <div class="col s12 m6 offset-m3">
         <div class="card darken-1">
@@ -26,62 +28,67 @@ export default {
   data () {
     return {
       msg: 'There\'s 168 Hours in a week. Minus six hours of sleep a night. You are left with 126 hours, make them count.',
-      timeLeftThisWeek: this.timeLeftFormatted()
+      time: {
+        passed: {
+          total: this.labelTimes(this.msToTime(this.timePassed()), true),
+          withSleep: ''
+        },
+        left: {
+          total: this.labelTimes(this.msToTime(this.timeTill()), true),
+          withSleep: ''
+        },
+        asleep: {
+          total: this.labelTimes(this.msToTime(this.timeAsleep()), true),
+          hours: 6
+        },
+        rightNow: this.labelTimes(this.msToTime(this.timePassed()), true),
+        countdown: this.labelTimes(this.msToTime(this.timeTill()), true),
+        estimateAsleep: this.labelTimes(this.msToTime(this.time), true)
+      },
+      displayEstimateAsleep: ''
     }
   },
   methods: {
-    update: function () {},
     msToTime: function (ms) {
       var tempTime = moment.duration(ms)
       var dateTime = {
-        days: tempTime.days(),
-        hours: tempTime.hours(),
+        hours: (tempTime.days() * 24) + tempTime.hours(),
         minutes: tempTime.minutes(),
         seconds: tempTime.seconds()
       }
       return dateTime
     },
-    labelTimes: function (dateTime) {
+    labelPassed: function () {
+      var self = this
+      return self.labelTimes(self.timePassed())
+    },
+    labelTimes: function (dateTime, seconds = false) {
       var label = ''
-      if (dateTime.days > 1) {
-        label += dateTime.days + ' days'
-      } else if (dateTime.days === 1) {
-        label += dateTime.days + ' day'
+      if (dateTime.days >= 1) {
+        dateTime.hours += dateTime.days * 24
       }
-
-      if (dateTime.hours > 1) {
-        label += ' ' + dateTime.hours + ' hours'
-      } else if (dateTime.hours === 1) {
-        label += ' ' + dateTime.hours + ' hour'
-      }
-
-      if (dateTime.minutes > 1) {
-        label += ' ' + dateTime.minutes + ' minutes'
-      } else if (dateTime.minutes === 1) {
-        label += ' ' + dateTime.minutes + ' minute'
-      }
-
+      ['hours', 'minutes', 'seconds'].forEach(function (timeFrame) {
+        if (seconds || timeFrame !== 'seconds') {
+          if (dateTime[timeFrame] > 1) {
+            label += ' ' + dateTime[timeFrame] + ' ' + timeFrame
+          } else if (dateTime[timeFrame] === 1) {
+            label += ' ' + dateTime[timeFrame] + ' ' + timeFrame.slice(0, -1)
+          }
+        }
+      })
       return label
     },
-    timeLeftFormatted: function () {
-      var timeObj = moment().countdown(moment().endOf('week'))
-      var label = this.labelTimes(timeObj)
-
-      if (timeObj.seconds !== 1) {
-        label += ' ' + timeObj.seconds + ' seconds'
-      } else {
-        label += ' ' + timeObj.seconds + ' second'
-      }
-      return label
+    timeAsleep: function (hours = 6) {
+      return (moment(moment().startOf('week')).countdown(moment().endOf('week')).days + 1) * hours * 60 * 60 * 1000
+    },
+    timeLeft: function () {
+      return moment().countdown(moment().endOf('week'))
     },
     timePassed: function () {
-      return moment(moment().startOf('week')).countdown(moment().utc()).value - this.timeAsleep()
+      return moment(moment().startOf('week')).countdown(moment().utc()).value
     },
     timeTill: function () {
       return moment().countdown(moment().endOf('week')).value
-    },
-    timeAsleep: function () {
-      return moment(moment().startOf('week')).countdown(moment().utc().add(1, 'day')).days * 6 * 60 * 60 * 1000
     }
   },
   mounted: function () {
@@ -100,7 +107,7 @@ export default {
     var ctx = document.getElementById('myChart')
     var data = {
       labels: [
-        'Time Asleep',
+        'Estimated Time Asleep',
         'Time Awake',
         'Time Left'
       ],
@@ -145,7 +152,9 @@ export default {
       myDoughnutChart.data.datasets[0].data[1] = self.timePassed()
       myDoughnutChart.data.datasets[0].data[2] = self.timeTill()
       myDoughnutChart.update()
-      self.timeLeftThisWeek = self.timeLeftFormatted()
+      self.time.passed.total = self.labelTimes(self.msToTime(self.timePassed()), true)
+      self.time.left.total = self.labelTimes(self.msToTime(self.timeTill()), true)
+      self.time.asleep.total = self.labelTimes(self.meToTime(self.timeAsleep()))
     }, 1000)
   }
 }
