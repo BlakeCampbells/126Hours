@@ -2,8 +2,7 @@
   <div class="hello">
     <p>{{ msg }}</p>
     <p>Time Remaining: {{ time.left.total }}</p>
-    <p>Time Passed: {{ time.passed.total }}</p>
-    <p>Estimated Time Asleep: {{ time.asleep.total }}</p>
+    <p>Time Passed: {{ time.awake.total }}</p>
     <div class="row">
       <div class="col s12 m6 offset-m3">
         <div class="card darken-1">
@@ -29,21 +28,22 @@ export default {
     return {
       msg: 'There\'s 168 Hours in a week. Minus six hours of sleep a night. You are left with 126 hours, make them count.',
       time: {
-        passed: {
+        asleep: {
+          estimate: this.labelTimes(this.msToTime(this.timeAsleep(6)), true),
+          total: this.labelTimes(this.msToTime(this.timeAsleepTotal(6)), true),
+          hours: 6
+        },
+        awake: {
           total: this.labelTimes(this.msToTime(this.timePassed()), true),
-          withSleep: ''
+          estimated: this.labelTimes(this.msToTime(this.timePassed()), true)
+        },
+        passed: {
+          total: this.labelTimes(this.msToTime(this.timePassed()), true)
         },
         left: {
           total: this.labelTimes(this.msToTime(this.timeTill()), true),
-          withSleep: ''
-        },
-        asleep: {
-          total: this.labelTimes(this.msToTime(this.timeAsleep()), true),
-          hours: 6
-        },
-        rightNow: this.labelTimes(this.msToTime(this.timePassed()), true),
-        countdown: this.labelTimes(this.msToTime(this.timeTill()), true),
-        estimateAsleep: this.labelTimes(this.msToTime(this.time), true)
+          estimated: ''
+        }
       },
       displayEstimateAsleep: ''
     }
@@ -78,29 +78,33 @@ export default {
       })
       return label
     },
-    timeAsleep: function (hours = 6) {
+    timeAsleepTotal: function (hours = 6) {
       return (moment(moment().startOf('week')).countdown(moment().endOf('week')).days + 1) * hours * 60 * 60 * 1000
     },
-    timeLeft: function () {
-      return moment().countdown(moment().endOf('week'))
+    timeAsleep: function (hours = 6) {
+      var timeAsleep = hours * 60 * 60 * 1000 * (moment(moment().startOf('week')).countdown(moment().utc()).days + 1)
+      console.log((moment(moment().startOf('week')).countdown(moment().utc())))
+      return timeAsleep
     },
     timePassed: function () {
       return moment(moment().startOf('week')).countdown(moment().utc()).value
     },
     timeTill: function () {
       return moment().countdown(moment().endOf('week')).value
+    },
+    estimateAsleep: function (hours = 6) {
+      return (moment(moment().utc()).countdown(moment().endOf('week')).days + 1) * hours * 60 * 60 * 1000
     }
   },
   mounted: function () {
     var self = this
     var week = {
       time: {
-        asleep: self.timeAsleep(),
-        passed: self.timePassed(),
+        asleep: self.timeAsleep(6),
+        awake: self.timePassed(),
         till: self.timeTill()
       }
     }
-    console.log('Week', week)
     console.log(countdown, momentCountdown)
     console.log('Time asleep', self.timeAsleep())
 
@@ -115,7 +119,7 @@ export default {
         {
           data: [
             week.time.asleep,
-            week.time.passed,
+            week.time.awake,
             week.time.till
           ],
           backgroundColor: [
@@ -149,13 +153,13 @@ export default {
       }
     })
     setInterval(function () {
-      myDoughnutChart.data.datasets[0].data[1] = self.timePassed()
+      myDoughnutChart.data.datasets[0].data[1] = self.timePassed() - self.timeAsleep(6)
       myDoughnutChart.data.datasets[0].data[2] = self.timeTill()
       myDoughnutChart.update()
-      self.time.passed.total = self.labelTimes(self.msToTime(self.timePassed()), true)
+      self.time.awake.estimated = self.labelTimes(self.msToTime(self.timePassed() - self.timeAsleep(6)), true)
       self.time.left.total = self.labelTimes(self.msToTime(self.timeTill()), true)
-      self.time.asleep.total = self.labelTimes(self.meToTime(self.timeAsleep()))
-    }, 1000)
+      self.time.asleep.total = self.labelTimes(self.msToTime(self.timeAsleep(6)))
+    }, 100000)
   }
 }
 </script>
