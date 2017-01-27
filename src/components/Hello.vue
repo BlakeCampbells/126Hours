@@ -107,6 +107,9 @@ export default {
       var timeLeft = moment().countdown(moment().endOf('week')).value
       var sleepLeft = (moment().countdown(moment().endOf('week')).days * hours * 60 * 60 * 1000)
       return timeLeft - sleepLeft
+    },
+    getQuote: function () {
+
     }
   },
   mounted: function () {
@@ -158,6 +161,7 @@ export default {
         }
       }
     })
+    self.getQuote()
     setInterval(function () {
       reloadedEstimates = {
         asleep: self.timeAsleep(6),
