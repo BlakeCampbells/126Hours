@@ -1,8 +1,17 @@
 <template>
   <div class="hello">
-    <p>{{ msg }}</p>
-    <p>Time Remaining: {{ time.left.total }}</p>
-    <p>Time Passed: {{ time.awake.total }}</p>
+    <div class="row">
+      <div class="col s12 m10 offset-m1">
+        <div class="card blue">
+          <div class="card-content white-text">
+            <p>{{ text.totalHours }}</p>
+            <p>{{ text.timeLeft }}</p>
+            <br>
+            <p>126 Hours - {{ time.awake.total }} = {{ time.left.total }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="row">
       <div class="col s12 m6 offset-m3">
         <div class="card darken-1">
@@ -26,7 +35,10 @@ export default {
   name: 'hello',
   data () {
     return {
-      msg: 'There\'s 168 Hours in a week. Minus six hours of sleep a night. You are left with 126 hours, make them count.',
+      text: {
+        totalHours: 'There\'s 168 Hours in a week. Minus six hours of sleep a night.',
+        timeLeft: 'You are left with 126 hours, make them count.'
+      },
       time: {
         asleep: {
           estimate: this.labelTimes(this.msToTime(this.timeAsleep(6)), true),
@@ -159,7 +171,7 @@ export default {
       self.time.awake.estimated = self.labelTimes(self.msToTime(self.timePassed() - self.timeAsleep(6)), true)
       self.time.left.total = self.labelTimes(self.msToTime(self.timeTill()), true)
       self.time.asleep.total = self.labelTimes(self.msToTime(self.timeAsleep(6)))
-    }, 100000)
+    }, 15000)
   }
 }
 </script>
