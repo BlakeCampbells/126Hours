@@ -46,7 +46,6 @@ export default {
       time: {
         asleep: {
           estimate: this.labelTimes(this.msToTime(this.timeAsleep(6)), true),
-          total: this.labelTimes(this.msToTime(this.timeAsleepTotal(6)), true),
           hours: 6
         },
         awake: {
@@ -94,9 +93,6 @@ export default {
       })
       return label
     },
-    timeAsleepTotal: function (hours = 6) {
-      return 7 * hours * 60 * 60 * 1000
-    },
     timeAsleep: function (hours = 6) {
       var timeAsleep = hours * 60 * 60 * 1000 * (moment(moment().startOf('week')).countdown(moment().utc()).days + 1)
       return timeAsleep
@@ -111,21 +107,22 @@ export default {
       var timeLeft = moment().countdown(moment().endOf('week')).value
       var sleepLeft = (moment().countdown(moment().endOf('week')).days * hours * 60 * 60 * 1000)
       return timeLeft - sleepLeft
-    },
-    estimateAsleep: function (hours = 6) {
-      return (moment(moment().utc()).countdown(moment().endOf('week')).days + 1) * hours * 60 * 60 * 1000
     }
   },
   mounted: function () {
     var self = this
+    var reloadedEstimates = {
+      asleep: '',
+      awake: '',
+      total: ''
+    }
     console.log(countdown, momentCountdown)
-    console.log('Time asleep', self.timeAsleep())
 
     var ctx = document.getElementById('myChart')
     var data = {
       labels: [
         'Time Awake',
-        'Time Left'
+        'Time Left Awake'
       ],
       datasets: [
         {
@@ -162,12 +159,19 @@ export default {
       }
     })
     setInterval(function () {
-      self.time.awake.estimate = self.labelTimes(self.msToTime(self.timePassed() - self.timeAsleep(6)), true)
-      self.time.left.estimate = self.labelTimes(self.msToTime(self.timeTillEstimate()), true)
-      self.time.asleep.estimate = self.labelTimes(self.msToTime(self.timeAsleep(6)), true)
+      reloadedEstimates = {
+        asleep: self.timeAsleep(6),
+        awake: self.timePassed() - self.timeAsleep(6),
+        left: self.timeTillEstimate()
+      }
 
-      myDoughnutChart.data.datasets[0].data[0] = (self.timePassed() - self.timeAsleep(6))
-      myDoughnutChart.data.datasets[0].data[1] = self.timeTillEstimate()
+      myDoughnutChart.data.datasets[0].data[0] = reloadedEstimates.awake
+      myDoughnutChart.data.datasets[0].data[1] = reloadedEstimates.left
+
+      self.time.awake.estimate = self.labelTimes(self.msToTime(reloadedEstimates.awake), true)
+      self.time.left.estimate = self.labelTimes(self.msToTime(reloadedEstimates.left), true)
+      self.time.asleep.estimate = self.labelTimes(self.msToTime(reloadedEstimates.asleep), true)
+
       myDoughnutChart.update()
     }, 1000)
   }
