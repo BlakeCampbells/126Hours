@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-    <hello></hello>
+    <time-tracking></time-tracking>
   </div>
 </template>
 
 <script>
-import Hello from './components/Hello'
+import TimeTracking from './components/TimeTracking'
 
 export default {
   name: 'app',
   components: {
-    Hello
+    TimeTracking
   }
 }
 </script>
@@ -21,7 +21,6 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
   margin-top: 60px;
 }
 </style>
