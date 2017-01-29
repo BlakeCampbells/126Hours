@@ -7,11 +7,30 @@
             <p>{{ text.totalHours }}</p>
             <p>{{ text.timeLeft }}</p>
             <br>
-            <h2>126 Hours</h2>
+            <h2>{{ time.awake.total | capitalize}}</h2>
             <h3>-</h3>
             <h4>Awake so Far: {{ (time.awake.estimate) }}</h4>
             <h4>=</h4>
             <h4>Left Awake this Week:{{ time.left.estimate }}</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12 m8 offset-m2">
+        <div class="card blue-grey">
+          <div class="card-content white-text">
+            <span class="card-title">
+              Customize
+            </span>
+            <p>
+              <div class="row">
+                Hours of sleep per night:
+                <div class="input-field inline">
+                  <input id="hours" type="number" v-model.number="hours" v-on:input="chartUpdate(hours)">
+                </div>
+              </div>
+            </p>
           </div>
         </div>
       </div>
@@ -34,11 +53,14 @@ import Chart from 'chart.js'
 import moment from 'moment'
 import countdown from 'countdown'
 import momentCountdown from 'moment-countdown'
+var myDoughnutChart
+var intervalTimer
 
 export default {
   name: 'hello',
   data () {
     return {
+      hours: 6,
       text: {
         totalHours: 'There\'s 168 Hours in a week. Minus six hours of sleep a night.',
         timeLeft: 'You are left with 126 hours, make them count.'
@@ -64,6 +86,64 @@ export default {
     }
   },
   methods: {
+    chartCreate: function () {
+      var self = this
+      console.log(countdown, momentCountdown)
+
+      var ctx = document.getElementById('myChart')
+      var data = {
+        labels: ['Time Awake', 'Time Left Awake'],
+        datasets: [
+          {
+            data: [1, 1],
+            backgroundColor: ['#ff0606', '#36A2EB']
+          }
+        ]
+      }
+      myDoughnutChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: data,
+        animationSteps: 10,
+        options: {
+          tooltips: {
+            callbacks: {
+              label: function (tooltipItem, data) {
+                var dateTime = self.msToTime(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index])
+                var dateLabel = self.labelTimes(dateTime)
+                var label = data.labels[tooltipItem.index]
+                return label + ': ' + dateLabel
+              }
+            }
+          }
+        }
+      })
+      console.log(myDoughnutChart)
+      self.chartUpdate(6)
+    },
+    chartUpdate: function (hours = 6) {
+      var self = this
+      var reloadedEstimates = {
+        asleep: '',
+        awake: '',
+        total: ''
+      }
+      self.time.awake.total = self.labelTimes(self.msToTime(self.timeAwakeTotal(hours)), true)
+      clearInterval(intervalTimer)
+      intervalTimer = setInterval(function () {
+        reloadedEstimates = {
+          asleep: self.timeAsleep(hours),
+          awake: self.timePassed() - self.timeAsleep(hours),
+          left: self.timeTillEstimate(hours)
+        }
+        self.time.awake.estimate = self.labelTimes(self.msToTime(reloadedEstimates.awake), true)
+        self.time.left.estimate = self.labelTimes(self.msToTime(reloadedEstimates.left), true)
+        self.time.asleep.estimate = self.labelTimes(self.msToTime(reloadedEstimates.asleep), true)
+
+        myDoughnutChart.data.datasets[0].data[0] = reloadedEstimates.awake
+        myDoughnutChart.data.datasets[0].data[1] = reloadedEstimates.left
+        myDoughnutChart.update()
+      }, 1000)
+    },
     msToTime: function (ms) {
       var tempTime = moment.duration(ms)
       var dateTime = {
@@ -97,6 +177,10 @@ export default {
       var timeAsleep = hours * 60 * 60 * 1000 * (moment(moment().startOf('week')).countdown(moment().utc()).days + 1)
       return timeAsleep
     },
+    timeAwakeTotal: function (hours = 6) {
+      var sleepLeft = (moment(moment().startOf('week')).countdown(moment().endOf('week')).days * (24 - hours) * 60 * 60 * 1000)
+      return sleepLeft
+    },
     timePassed: function () {
       return moment(moment().startOf('week')).countdown(moment().utc()).value
     },
@@ -110,70 +194,7 @@ export default {
     }
   },
   mounted: function () {
-    var self = this
-    var reloadedEstimates = {
-      asleep: '',
-      awake: '',
-      total: ''
-    }
-    console.log(countdown, momentCountdown)
-
-    var ctx = document.getElementById('myChart')
-    var data = {
-      labels: [
-        'Time Awake',
-        'Time Left Awake'
-      ],
-      datasets: [
-        {
-          data: [
-            1,
-            1
-          ],
-          backgroundColor: [
-            '#ff0606',
-            '#36A2EB'
-          ],
-          hoverBackgroundColor: [
-            '#ff0606',
-            '#36A2EB'
-          ]
-        }
-      ]
-    }
-    var myDoughnutChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: data,
-      animationStaps: 10,
-      options: {
-        tooltips: {
-          callbacks: {
-            label: function (tooltipItem, data) {
-              var dateTime = self.msToTime(data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index])
-              var dateLabel = self.labelTimes(dateTime)
-              var label = data.labels[tooltipItem.index]
-              return label + ': ' + dateLabel
-            }
-          }
-        }
-      }
-    })
-    setInterval(function () {
-      reloadedEstimates = {
-        asleep: self.timeAsleep(6),
-        awake: self.timePassed() - self.timeAsleep(6),
-        left: self.timeTillEstimate()
-      }
-
-      myDoughnutChart.data.datasets[0].data[0] = reloadedEstimates.awake
-      myDoughnutChart.data.datasets[0].data[1] = reloadedEstimates.left
-
-      self.time.awake.estimate = self.labelTimes(self.msToTime(reloadedEstimates.awake), true)
-      self.time.left.estimate = self.labelTimes(self.msToTime(reloadedEstimates.left), true)
-      self.time.asleep.estimate = self.labelTimes(self.msToTime(reloadedEstimates.asleep), true)
-
-      myDoughnutChart.update()
-    }, 1000)
+    this.chartCreate()
   }
 }
 </script>
