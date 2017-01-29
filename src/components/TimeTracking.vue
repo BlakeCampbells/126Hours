@@ -4,14 +4,24 @@
       <div class="col s12 m10 offset-m1">
         <div class="card blue">
           <div class="card-content white-text">
-            <p>{{ text.totalHours }}</p>
-            <p>{{ text.timeLeft }}</p>
+            <p>There's 168 Hours in a week. Minus {{ hours }} six hours of sleep a night.</p>
+            <p>You are left with {{ time.awake.total }}, make them count.</p>
             <br>
             <h2>{{ time.awake.total | capitalize}}</h2>
             <h3>-</h3>
             <h4>Awake so Far: {{ (time.awake.estimate) }}</h4>
             <h4>=</h4>
             <h4>Left Awake this Week:{{ time.left.estimate }}</h4>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col s12 m6 offset-m3">
+        <div class="card darken-1">
+          <div class="card-content">
+            <span class="card-title">Time Spent</span>
+            <canvas id="myChart" width="100" height="100"></canvas>
           </div>
         </div>
       </div>
@@ -25,22 +35,12 @@
             </span>
             <p>
               <div class="row">
-                Hours of sleep per night:
-                <div class="input-field inline">
-                  <input id="hours" type="number" v-model.number="hours" v-on:input="chartUpdate(hours)">
-                </div>
+                Hours of sleep per night: {{hours}}
+                <p class="range-field col s12 m8 offset-m2">
+                  <input type="range" id="test5" min="0" max="24" v-model.number="hours" v-on:input="chartUpdate(hours)"/>
+                </p>
               </div>
             </p>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col s12 m6 offset-m3">
-        <div class="card darken-1">
-          <div class="card-content">
-            <span class="card-title">Time Spent</span>
-            <canvas id="myChart" width="200" height="200"></canvas>
           </div>
         </div>
       </div>
@@ -53,6 +53,7 @@ import Chart from 'chart.js'
 import moment from 'moment'
 import countdown from 'countdown'
 import momentCountdown from 'moment-countdown'
+// I don't like global variables, but these are limited to this component
 var myDoughnutChart
 var intervalTimer
 
@@ -62,7 +63,6 @@ export default {
     return {
       hours: 6,
       text: {
-        totalHours: 'There\'s 168 Hours in a week. Minus six hours of sleep a night.',
         timeLeft: 'You are left with 126 hours, make them count.'
       },
       time: {
