@@ -4,7 +4,7 @@
       <div class="col s12 m10 offset-m1">
         <div class="card blue">
           <div class="card-content white-text">
-            <p>There's 168 Hours in a week. Minus {{ hours }} six hours of sleep a night.</p>
+            <p>There's 168 Hours in a week. Minus {{ hours }} hours of sleep a night.</p>
             <p>You are left with {{ time.awake.total }}, make them count.</p>
             <br>
             <h2>{{ time.awake.total | capitalize}}</h2>
