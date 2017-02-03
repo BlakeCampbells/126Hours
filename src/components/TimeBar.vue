@@ -31,8 +31,8 @@
     </div>
 
     <div class="col s9">
-      <div class="blue lighten-1">
-        <div class="white-text">
+      <div class="white">
+        <div>
           <span>Time Spent</span>
           <canvas id="myChart"></canvas>
         </div>
@@ -89,7 +89,7 @@ export default {
         datasets: [
           {
             data: [1, 1],
-            backgroundColor: ['#ff0606', '#a7d8f9']
+            backgroundColor: ['#ff0606', '#0D47A1']
           }
         ]
       }
@@ -100,7 +100,7 @@ export default {
         options: {
           legend: {
             labels: {
-              fontColor: 'white',
+              fontColor: 'black',
               fontSize: 18
             }
           },
