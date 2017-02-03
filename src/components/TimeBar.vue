@@ -1,47 +1,40 @@
 <template>
-  <div class="hello">
-    <div class="row">
-      <div class="col s12 m10 offset-m1">
-        <div class="card blue">
-          <div class="card-content white-text">
-            <p>There's 168 Hours in a week. Minus {{ hours }} hours of sleep a night.</p>
-            <p>You are left with {{ time.awake.total }}, make them count.</p>
-            <br>
-            <h2>{{ time.awake.total | capitalize}}</h2>
-            <h3>-</h3>
-            <h4>Awake so Far: {{ (time.awake.estimate) }}</h4>
-            <h4>=</h4>
-            <h4>Left Awake this Week:{{ time.left.estimate }}</h4>
-          </div>
-        </div>
+  <div class="row hello">
+    <div class="blue-grey col s3">
+      <!-- Grey navigation panel -->
+      <div class="white-text">
+        <p>There's 168 Hours in a week. Minus {{ hours }} hours of sleep a night.</p>
+        <p>You are left with {{ time.awake.total }}, make them count.</p>
+        <br>
+        <h2>{{ time.awake.total | capitalize}}</h2>
+        <h3>-</h3>
+        Awake so Far:<h4>{{ (time.awake.estimate) }}</h4>
+        <h4>=</h4>
+        Left Awake this Week:<h4>{{ time.left.estimate }}</h4>
       </div>
-    </div>
-    <div class="row">
-      <div class="col s12 m6 offset-m3">
-        <div class="card darken-1">
-          <div class="card-content">
-            <span class="card-title">Time Spent</span>
-            <canvas id="myChart" width="100" height="100"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col s12 m8 offset-m2">
-        <div class="card blue-grey">
-          <div class="card-content white-text">
-            <span class="card-title">
-              Customize
-            </span>
-            <p>
-              <div class="row">
-                Hours of sleep per night: {{hours}}
-                <p class="range-field col s12 m8 offset-m2">
-                  <input type="range" id="test5" min="0" max="24" v-model.number="hours" v-on:input="chartUpdate(hours)"/>
-                </p>
-              </div>
+      <br>
+      <hr>
+      <br>
+      <div class="white-text">
+        <span>
+          Customize
+        </span>
+        <p>
+          <div class="row">
+            Hours of sleep per night: {{hours}}
+            <p class="range-field col s12 m8 offset-m2">
+              <input type="range" id="test5" min="0" max="23" v-model.number="hours" v-on:input="chartUpdate(hours)"/>
             </p>
           </div>
+        </p>
+      </div>
+    </div>
+
+    <div class="col s9">
+      <div class="blue lighten-1">
+        <div class="white-text">
+          <span>Time Spent</span>
+          <canvas id="myChart"></canvas>
         </div>
       </div>
     </div>
@@ -96,7 +89,7 @@ export default {
         datasets: [
           {
             data: [1, 1],
-            backgroundColor: ['#ff0606', '#36A2EB']
+            backgroundColor: ['#ff0606', '#a7d8f9']
           }
         ]
       }
@@ -105,6 +98,12 @@ export default {
         data: data,
         animationSteps: 10,
         options: {
+          legend: {
+            labels: {
+              fontColor: 'white',
+              fontSize: 18
+            }
+          },
           tooltips: {
             callbacks: {
               label: function (tooltipItem, data) {
@@ -201,7 +200,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
+h1, h2, h3, h4, h5 {
   font-weight: normal;
 }
 
@@ -215,7 +214,18 @@ li {
   margin: 0 10px;
 }
 
+.card {
+  position: relative;
+  background-color: #fff;
+  transition: box-shadow .25s;
+  border-radius: 2px;
+}
+
 a {
   color: #42b983;
+}
+
+.row .col{
+  padding: 0 !important;
 }
 </style>
