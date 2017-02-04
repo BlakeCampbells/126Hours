@@ -1,12 +1,12 @@
 <template>
-  <div class="row hello">
+  <div class="row TimeBar">
     <div class="blue-grey col s3">
       <!-- Grey navigation panel -->
       <div class="white-text">
         <p>There's 168 Hours in a week. Minus {{ hours }} hours of sleep a night.</p>
         <p>You are left with {{ time.awake.total }}, make them count.</p>
         <br>
-        <h2>{{ time.awake.total | capitalize}}</h2>
+        <h2>{{ time.awake.total }}</h2>
         <h3>-</h3>
         Awake so Far:<h4>{{ (time.awake.estimate) }}</h4>
         <h4>=</h4>
@@ -21,7 +21,7 @@
         </span>
         <p>
           <div class="row">
-            Hours of sleep per night: {{hours}}
+            Hours of sleep per night: {{ hours }}
             <p class="range-field col s12 m8 offset-m2">
               <input type="range" id="test5" min="0" max="23" v-model.number="hours" v-on:input="chartUpdate(hours)"/>
             </p>
@@ -51,13 +51,10 @@ var myDoughnutChart
 var intervalTimer
 
 export default {
-  name: 'hello',
+  name: 'TimeBar',
   data () {
     return {
       hours: 6,
-      text: {
-        timeLeft: 'You are left with 126 hours, make them count.'
-      },
       time: {
         asleep: {
           estimate: this.labelTimes(this.msToTime(this.timeAsleep(6)), true),
@@ -74,8 +71,7 @@ export default {
           total: this.labelTimes(this.msToTime(this.timeTill()), true),
           estimate: this.labelTimes(this.msToTime(this.timeTillEstimate()), true)
         }
-      },
-      displayEstimateAsleep: ''
+      }
     }
   },
   methods: {
@@ -151,10 +147,6 @@ export default {
         seconds: tempTime.seconds()
       }
       return dateTime
-    },
-    labelPassed: function () {
-      var self = this
-      return self.labelTimes(self.timePassed())
     },
     labelTimes: function (dateTime, seconds = false) {
       var label = ''
