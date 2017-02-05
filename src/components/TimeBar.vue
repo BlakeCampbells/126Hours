@@ -57,19 +57,19 @@ export default {
       hours: 6,
       time: {
         asleep: {
-          estimate: this.labelTimes(this.msToTime(this.timeAsleep(6)), true),
+          estimate: 0,
           hours: 6
         },
         awake: {
-          total: this.labelTimes(this.msToTime(this.timePassed()), true),
-          estimate: this.labelTimes(this.msToTime(this.timePassed()), true)
+          total: 0,
+          estimate: 0
         },
         passed: {
-          total: this.labelTimes(this.msToTime(this.timePassed()), true)
+          total: 0
         },
         left: {
-          total: this.labelTimes(this.msToTime(this.timeTill()), true),
-          estimate: this.labelTimes(this.msToTime(this.timeTillEstimate()), true)
+          total: 0,
+          estimate: 0
         }
       }
     }

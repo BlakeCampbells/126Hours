@@ -3,23 +3,26 @@ import App from 'src/App'
 
 describe('App.vue', () => {
   // Name
-  it('Component to have the correct name', () => {
-    App.name.should.equal('App')
+  describe('Name', () => {
+    it('To be correct', () => {
+      App.name.should.equal('App')
+    })
   })
-
 // ======================================================
 // Data Testing Start
 // ======================================================
-  it('Data to be a function', () => {
-    var data = App.data
-    expect(data).to.be.a('function')
-  })
+  describe('Data', () => {
+    it('To be a function', () => {
+      var data = App.data
+      expect(data).to.be.a('function')
+    })
 
-  it('Navbar to be an array', () => {
-    var tools = App.data().navbar
-    expect(tools).to.be.an('array')
-    expect(tools[0]).to.have.property('name')
-    expect(tools[0]).to.have.property('link')
+    it('Navbar to be an array', () => {
+      var tools = App.data().navbar
+      expect(tools).to.be.an('array')
+      expect(tools[0]).to.have.property('name')
+      expect(tools[0]).to.have.property('link')
+    })
   })
 // ======================================================
 // Data Testing End
