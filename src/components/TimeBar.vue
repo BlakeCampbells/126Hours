@@ -150,10 +150,8 @@ export default {
     },
     labelTimes: function (dateTime, seconds = false) {
       var label = ''
-      if (dateTime.days >= 1) {
-        dateTime.hours += dateTime.days * 24
-      }
-      ['hours', 'minutes', 'seconds'].forEach(function (timeFrame) {
+      var timeframes = ['hours', 'minutes', 'seconds']
+      timeframes.forEach(function (timeFrame) {
         if (seconds || timeFrame !== 'seconds') {
           if (dateTime[timeFrame] > 1) {
             label += ' ' + dateTime[timeFrame] + ' ' + timeFrame

@@ -21,6 +21,11 @@ describe('TimeBar.vue', () => {
     expect(timeObj).to.be.a('function')
   })
 
+  it('Time Till Estimate to return a number', () => {
+    var time = TimeBar.methods.timeTillEstimate()
+    expect(time).to.be.a('number')
+  })
+
   it('Update Chart to be a function', () => {
     var timeObj = TimeBar.methods.chartUpdate
     expect(timeObj).to.be.a('function')
@@ -38,14 +43,14 @@ describe('TimeBar.vue', () => {
   })
 
   it('Label Time to return a string with Hours/Minutes/Seconds', () => {
-    var label = TimeBar.methods.labelTimes(TimeBar.methods.msToTime(12345678910), true)
+    var label = TimeBar.methods.labelTimes(TimeBar.methods.msToTime(12345601000), true)
     expect(label).to.be.a('string')
     expect(label).to.have.string('501 hours')
-    expect(label).to.have.string('21 minutes')
-    expect(label).to.have.string('18 seconds')
+    expect(label).to.have.string('20 minutes')
+    expect(label).to.have.string('1 second')
   })
 
-  it('Label Time to return a string with Hours/Minutes', () => {
+  it('Label Time to return a string with Hours/Minutes/Second', () => {
     var label = TimeBar.methods.labelTimes(TimeBar.methods.msToTime(12345678910), false)
     expect(label).to.be.a('string')
     expect(label).to.have.string('501 hours')
