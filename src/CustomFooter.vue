@@ -38,7 +38,7 @@
 
 <script>
 export default {
-  name: 'customFooter',
+  name: 'CustomFooter',
   data () {
     return {
       toolsUsed: [{

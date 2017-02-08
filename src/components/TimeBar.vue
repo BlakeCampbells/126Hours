@@ -1,12 +1,12 @@
 <template>
-  <div class="row hello">
+  <div class="row TimeBar">
     <div class="blue-grey col s3">
       <!-- Grey navigation panel -->
       <div class="white-text">
         <p>There's 168 Hours in a week. Minus {{ hours }} hours of sleep a night.</p>
         <p>You are left with {{ time.awake.total }}, make them count.</p>
         <br>
-        <h2>{{ time.awake.total | capitalize}}</h2>
+        <h2>{{ time.awake.total }}</h2>
         <h3>-</h3>
         Awake so Far:<h4>{{ (time.awake.estimate) }}</h4>
         <h4>=</h4>
@@ -21,7 +21,7 @@
         </span>
         <p>
           <div class="row">
-            Hours of sleep per night: {{hours}}
+            Hours of sleep per night: {{ hours }}
             <p class="range-field col s12 m8 offset-m2">
               <input type="range" id="test5" min="0" max="23" v-model.number="hours" v-on:input="chartUpdate(hours)"/>
             </p>
@@ -51,31 +51,27 @@ var myDoughnutChart
 var intervalTimer
 
 export default {
-  name: 'hello',
+  name: 'TimeBar',
   data () {
     return {
       hours: 6,
-      text: {
-        timeLeft: 'You are left with 126 hours, make them count.'
-      },
       time: {
         asleep: {
-          estimate: this.labelTimes(this.msToTime(this.timeAsleep(6)), true),
+          estimate: 0,
           hours: 6
         },
         awake: {
-          total: this.labelTimes(this.msToTime(this.timePassed()), true),
-          estimate: this.labelTimes(this.msToTime(this.timePassed()), true)
+          total: 0,
+          estimate: 0
         },
         passed: {
-          total: this.labelTimes(this.msToTime(this.timePassed()), true)
+          total: 0
         },
         left: {
-          total: this.labelTimes(this.msToTime(this.timeTill()), true),
-          estimate: this.labelTimes(this.msToTime(this.timeTillEstimate()), true)
+          total: 0,
+          estimate: 0
         }
-      },
-      displayEstimateAsleep: ''
+      }
     }
   },
   methods: {
@@ -152,16 +148,10 @@ export default {
       }
       return dateTime
     },
-    labelPassed: function () {
-      var self = this
-      return self.labelTimes(self.timePassed())
-    },
     labelTimes: function (dateTime, seconds = false) {
       var label = ''
-      if (dateTime.days >= 1) {
-        dateTime.hours += dateTime.days * 24
-      }
-      ['hours', 'minutes', 'seconds'].forEach(function (timeFrame) {
+      var timeframes = ['hours', 'minutes', 'seconds']
+      timeframes.forEach(function (timeFrame) {
         if (seconds || timeFrame !== 'seconds') {
           if (dateTime[timeFrame] > 1) {
             label += ' ' + dateTime[timeFrame] + ' ' + timeFrame

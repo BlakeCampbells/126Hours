@@ -20,7 +20,7 @@
 import TimeBar from './components/TimeBar'
 
 export default {
-  name: 'app',
+  name: 'App',
   components: {
     TimeBar
   },
