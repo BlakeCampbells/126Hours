@@ -1,6 +1,6 @@
 <template>
-  <div class="row TimeBar">
-    <div class="blue-grey col s3">
+  <span class="row TimeBar">
+    <div class="blue-grey col s3 full-height">
       <!-- Grey navigation panel -->
       <div class="white-text">
         <p>There's 168 Hours in a week. Minus {{ hours }} hours of sleep a night.</p>
@@ -31,14 +31,14 @@
     </div>
 
     <div class="col s9">
-      <div class="white">
+      <div class="white center-align">
         <div>
           <span>Time Spent</span>
           <canvas id="myChart"></canvas>
         </div>
       </div>
     </div>
-  </div>
+  </span>
 </template>
 
 <script>
@@ -79,7 +79,9 @@ export default {
       var self = this
       console.log(countdown, momentCountdown)
 
-      var ctx = document.getElementById('myChart')
+      var ctx = document.getElementById('myChart').getContext('2d')
+      ctx.canvas.width = 600
+      ctx.canvas.height = 600
       var data = {
         labels: ['Time Awake', 'Time Left Awake'],
         datasets: [
@@ -94,6 +96,8 @@ export default {
         data: data,
         animationSteps: 10,
         options: {
+          responsive: true,
+          maintainAspectRatio: false,
           legend: {
             labels: {
               fontColor: 'black',
